@@ -48,7 +48,8 @@ module.exports = function (robot) {
             });
     });
 
-    robot.respond(/mtg\s+find\s+(.*)/i, function (robo) {
+    //robot.respond(/mtg\s+find\s+(.*)/i, function (robo) {
+    robot.hear(/tutor\s+(.*)/i, function (robo) {
         var cardName = utils.getCardName(robo.match[1]),
             urlParams = utils.parseUrlParams(robo.match[1]);
 
