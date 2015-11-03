@@ -25,7 +25,7 @@ var api = require('./utils/api'),
     Q = require('q');
 
 module.exports = function (robot) {
-    robot.respond(/mtg\s+clash\s+(@\w+)/i, function(robo) {
+    robot.respond(/clash\s+(@\w+)/i, function(robo) {
         Q.all([ api.getRandomMultiverseId(robot), api.getRandomMultiverseId(robot) ])
             .done(function(multiverseIds) {
                 Q.all([ api.getRandomCard(robot, multiverseIds[0]), api.getRandomCard(robot, multiverseIds[1]) ])
@@ -38,7 +38,7 @@ module.exports = function (robot) {
             });
     });
 
-    robot.respond(/mtg\s+random/i, function(robo) {
+    robot.respond(/random/i, function(robo) {
         api.getRandomMultiverseId(robot)
             .then(function(multiverseId){
                 return api.getRandomCard(robot, multiverseId);
@@ -50,7 +50,7 @@ module.exports = function (robot) {
 
     //robot.respond(/mtg\s+find\s+(.*)/i, function (robo) {
     robot.hear(/^tutor\s+(.*)/i, function (robo) {
-        if (robo.match[1].indexOf('mtg') != -1) {
+        if (robo.match[1].indexOf('random') > -1 || robo.match[1].indexOf('clash') > -1) {
             return true;
         }
 
