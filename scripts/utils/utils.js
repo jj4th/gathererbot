@@ -141,6 +141,7 @@ module.exports = {
         detailsMessage = (cardDetails.cardImage) ?
             cardDetails.cardImage : getCardDetailsString(cardDetails);
 
-        res.send(detailsMessage + '\n' + gathererText);
+        // res.send(detailsMessage + '\n' + gathererText);
+        res.send(detailsMessage);
     }
 };
