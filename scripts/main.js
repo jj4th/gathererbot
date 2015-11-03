@@ -50,6 +50,10 @@ module.exports = function (robot) {
 
     //robot.respond(/mtg\s+find\s+(.*)/i, function (robo) {
     robot.hear(/^tutor\s+(.*)/i, function (robo) {
+        if (robo.match[1].indexOf('mtg') != -1) {
+            return true;
+        }
+
         var cardName = utils.getCardName(robo.match[1]),
             urlParams = utils.parseUrlParams(robo.match[1]);
 
