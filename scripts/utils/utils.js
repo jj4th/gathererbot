@@ -8,7 +8,7 @@ var consts = require('../../static/consts'),
     responseErrorCodes = consts.responseErrorCodes,
     urlMap = consts.urlMap,
 
-    DETAILS_ERROR = 'There was an issue retrieving the cards\'s details. Please try again.';
+    DETAILS_ERROR = consts.DETAILS_ERROR;
 
 function getCardDetailsString(cardDetails) {
     var details = [

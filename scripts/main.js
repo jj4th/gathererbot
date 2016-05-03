@@ -23,6 +23,8 @@ var api = require('./utils/api'),
     consts = require('../static/consts'),
     urlMap = consts.urlMap,
     lastMatch = null,
+    page = 0,
+    maxPage = 0,
     Q = require('q');
 
 module.exports = function (robot) {
@@ -61,15 +63,27 @@ module.exports = function (robot) {
         }
 
         var select = null;
-        if (!isNaN(curMatch)) {
+        if (curMatch == 'next') {
+            if (page < maxPage) {
+                page++;
+            }
+            curMatch = lastMatch;
+        } else if (curMatch == 'prev') {
+            if (page > 0) {
+                page--;
+            }
+            curMatch = lastMatch;
+        } else if (!isNaN(curMatch)) {
             select = parseInt(curMatch);
             curMatch = lastMatch;
         } else {
+            page = 0;
             lastMatch = curMatch;
         }
 
         var cardName = utils.getCardName(curMatch),
-            urlParams = utils.parseUrlParams(curMatch);
+            urlParams = utils.parseUrlParams(curMatch),
+            offset = page * consts.CARD_LIMIT;
 
         robot.http(urlMap.deckBrewBase + urlParams)
             .header('Accept', 'application/json')
@@ -79,7 +93,8 @@ module.exports = function (robot) {
                 } else if (utils.hasErrorCode(res.statusCode)) {
                     mtgFind.parseCommandError(robo, err);
                 } else {
-                    mtgFind.parseResponse(robo, body, cardName, urlParams, select);
+                    var cards = mtgFind.parseResponse(robo, body, cardName, urlParams, select, offset);
+                    maxPage = Math.floor(cards / consts.CARD_LIMIT);
                 }
             });
     });

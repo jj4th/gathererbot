@@ -6,8 +6,8 @@ var consts = require('../../static/consts'),
     pluck = require('lodash/collection/pluck'),
     reduce = require('lodash/collection/reduce'),
 
-    CARD_LIMIT = 10,
-    FIND_CMD_ERROR = 'Invalid parameters. Please make sure that parameters are separated by a comma.';
+    CARD_LIMIT = consts.CARD_LIMIT,
+    FIND_CMD_ERROR = consts.FIND_CMD_ERROR;
 
 function getCardPoolSizeString(sampleSize, poolSize) {
     return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:';
@@ -18,7 +18,8 @@ function getCardNotFoundError(cardName) {
 }
 
 module.exports = {
-    parseResponse: function(robo, body, cardName, urlParams, select) {
+    // Returns the number of cards found.
+    parseResponse: function(robo, body, cardName, urlParams, select, offset) {
         var cardDetails,
             gathererBaseUrl,
             gathererParams,
@@ -47,13 +48,17 @@ module.exports = {
                 robo.send('Please specify a number in the range 1-' + cards.length);
             }
 
+        } else if (offset && offset > cards.length) {
+            robo.send('You have specified an out of bounds page.');
+
         } else if (cards.length > 0) {
             // Grab the first X amount of cards, which is determined from the constant cardLimit.
             // Then print off the name of each card.
-            cardSample = cards.slice(0, CARD_LIMIT);
+            cardSample = cards.slice(offset, offset + CARD_LIMIT);
             cardSampleNames = pluck(cardSample, 'name');
             cardSampleText = reduce(cardSampleNames, function (cardList, cardName, index) {
-                return cardList + '\n' + (index + 1) + '. ' + cardName;
+                var cardNum = offset + index + 1;
+                return cardList + '\n' + cardNum + '. ' + cardName;
             }, '');
             cardPoolSize = getCardPoolSizeString(cardSample.length, cards.length);
 
@@ -65,6 +70,8 @@ module.exports = {
         } else {
             robo.send(getCardNotFoundError(cardName));
         }
+
+        return cards.length;
     },
 
     parseCommandError: function(robo, err) {
