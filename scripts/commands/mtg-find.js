@@ -4,8 +4,9 @@ var consts = require('../../static/consts'),
     find = require('lodash/collection/find'),
     isEmpty = require('lodash/lang/isEmpty'),
     pluck = require('lodash/collection/pluck'),
+    reduce = require('lodash/collection/reduce'),
 
-    CARD_LIMIT = 5,
+    CARD_LIMIT = 10,
     FIND_CMD_ERROR = 'Invalid parameters. Please make sure that parameters are separated by a comma.';
 
 function getCardPoolSizeString(sampleSize, poolSize) {
@@ -17,7 +18,7 @@ function getCardNotFoundError(cardName) {
 }
 
 module.exports = {
-    parseResponse: function(robo, body, cardName, urlParams) {
+    parseResponse: function(robo, body, cardName, urlParams, select) {
         var cardDetails,
             gathererBaseUrl,
             gathererParams,
@@ -37,19 +38,28 @@ module.exports = {
             cardDetails = utils.getCardDetails(card);
             utils.sendDetails(robo, cardDetails);
 
+        } else if (select != null) {
+            if (select > 0 && select <= cards.length) {
+                card = cards[select - 1];
+                cardDetails = utils.getCardDetails(card);
+                utils.sendDetails(robo, cardDetails);
+            } else {
+                robo.send('Please specify a number in the range 1-' + cards.length);
+            }
+
         } else if (cards.length > 0) {
             // Grab the first X amount of cards, which is determined from the constant cardLimit.
             // Then print off the name of each card.
             cardSample = cards.slice(0, CARD_LIMIT);
             cardSampleNames = pluck(cardSample, 'name');
-            cardSampleText = cardSampleNames.join('\n');
+            cardSampleText = reduce(cardSampleNames, function (cardList, cardName, index) {
+                return cardList + '\n' + (index + 1) + '. ' + cardName;
+            }, '');
             cardPoolSize = getCardPoolSizeString(cardSample.length, cards.length);
 
             gathererBaseUrl = consts.urlMap.gathererAdvanced;
             gathererParams = utils.parseGathererUrlParams(urlParams);
-            //gathererUrl = 'View in Gatherer: ' + gathererBaseUrl + gathererParams;
 
-            //robo.send(cardPoolSize + '\n' + cardSampleText + '\n' + gathererUrl);
             robo.send(cardPoolSize + '\n' + cardSampleText);
 
         } else {

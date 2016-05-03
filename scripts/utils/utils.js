@@ -67,7 +67,7 @@ module.exports = {
             return 'name=' + userInput;
 
         } else {
-            params = userInput.split(',');
+            params = userInput.split(';');
 
             trimmedParams = map(params, function (param) {
                 return param.trim();

@@ -20,8 +20,9 @@ var api = require('./utils/api'),
     mtgClash = require('./commands/mtg-clash'),
     mtgRandom = require('./commands/mtg-random'),
     utils = require('./utils/utils'),
-    urlMap = require('../static/consts').urlMap,
-
+    consts = require('../static/consts'),
+    urlMap = consts.urlMap,
+    lastMatch = null,
     Q = require('q');
 
 module.exports = function (robot) {
@@ -48,14 +49,27 @@ module.exports = function (robot) {
             });
     });
 
-    //robot.respond(/mtg\s+find\s+(.*)/i, function (robo) {
+    robot.respond(/help/i, function(robo) {
+        robo.send(consts.helpText);
+    });
+
     robot.hear(/^tutor\s+(.*)/i, function (robo) {
-        if (robo.match[1].indexOf('random') > -1 || robo.match[1].indexOf('clash') > -1) {
+        var curMatch = robo.match[1];
+
+        if (curMatch.indexOf('random') > -1 || curMatch.indexOf('clash') > -1 || curMatch.indexOf('help') > -1) {
             return true;
         }
 
-        var cardName = utils.getCardName(robo.match[1]),
-            urlParams = utils.parseUrlParams(robo.match[1]);
+        var select = null;
+        if (!isNaN(curMatch)) {
+            select = parseInt(curMatch);
+            curMatch = lastMatch;
+        } else {
+            lastMatch = curMatch;
+        }
+
+        var cardName = utils.getCardName(curMatch),
+            urlParams = utils.parseUrlParams(curMatch);
 
         robot.http(urlMap.deckBrewBase + urlParams)
             .header('Accept', 'application/json')
@@ -65,7 +79,7 @@ module.exports = function (robot) {
                 } else if (utils.hasErrorCode(res.statusCode)) {
                     mtgFind.parseCommandError(robo, err);
                 } else {
-                    mtgFind.parseResponse(robo, body, cardName, urlParams);
+                    mtgFind.parseResponse(robo, body, cardName, urlParams, select);
                 }
             });
     });

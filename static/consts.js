@@ -1,4 +1,10 @@
 module.exports = {
+    helpText: 'For simple searches, just `tutor cardName`.' +
+        ' \nFor more complex searches, you may specify: `color`, `format`, `oracle`, `rarity`, `set`, `subtype`, `type`' +
+        ' as in `tutor color=white`.  Multiple parameters should be separated with a semi-colon as in:' +
+        ' `tutor color=white; type=instant`.' +
+        ' \nIf a search returns more than one result, please be more specific, or retrieve one of the listed cards by' +
+        ' searching for its number, for example `tutor 1` will return the first card in the list.',
     defaultError: 'There was an issue with your request. Please try again.',
     gathererColorMap: {
         blue: 'u',
