@@ -35,6 +35,11 @@ module.exports = {
 
         // If find() comes back with a match that means it found the exact card the user was
         // looking for. Otherwise, that means the service has found more than one match.
+
+        if (!card && cards.length === 1) {
+           card = cards[0];
+        }
+
         if (card) {
             cardDetails = utils.getCardDetails(card);
             utils.sendDetails(robo, cardDetails);
