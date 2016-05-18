@@ -98,4 +98,28 @@ module.exports = function (robot) {
                 }
             });
     });
+    
+    robot.hear(/\[([^\]]+)\]/i, function (robo) {
+        var curMatch = robo.match[1];
+        page = 0;
+        lastMatch = curMatch;
+
+        var cardName = utils.getCardName(curMatch),
+            urlParams = utils.parseUrlParams(curMatch),
+            offset = 0,
+            select = null;
+
+        robot.http(urlMap.deckBrewBase + urlParams)
+            .header('Accept', 'application/json')
+            .get()(function(err, res, body){
+                if (err) {
+                    mtgFind.parseServerError(robo, err);
+                } else if (utils.hasErrorCode(res.statusCode)) {
+                    mtgFind.parseCommandError(robo, err);
+                } else {
+                    var cards = mtgFind.parseResponse(robo, body, cardName, urlParams, select, offset);
+                    maxPage = Math.floor(cards / consts.CARD_LIMIT);
+                }
+            });
+    });
 };
