@@ -40,6 +40,7 @@
     "coffee-script": "^1.10.0",
     "hubot": "^2.16.0",
     "hubot-slack": "^3.4.1",
+    "hubot-slack-blacklist-middleware": "^1.0.2",
     "lodash": "^3.10.1",
     "q": "^1.4.1"
   }
