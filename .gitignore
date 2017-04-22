@@ -10,6 +10,6 @@ node_modules/
 ###########
 
 npm-debug.log
-all_cards.json
+data/allSets.json
 .DS_STORE
 .hubot_history

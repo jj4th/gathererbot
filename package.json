@@ -1,11 +1,14 @@
 {
-  "name": "gathererbot",
-  "version": "1.0.7",
+  "name": "tutorbot",
+  "version": "1.0.0",
   "description": "A simple hubot that can look up mtg cards",
   "main": "index.js",
   "scripts": {
     "shell": "hubot --adapter shell --disable-httpd",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=7.10.1"
   },
   "eslintConfig": {
     "rules": {
@@ -37,11 +40,8 @@
     "gulp-eslint": "^1.0.0"
   },
   "dependencies": {
-    "coffee-script": "^1.10.0",
-    "hubot": "^2.16.0",
-    "hubot-slack": "^3.4.1",
-    "hubot-slack-blacklist-middleware": "^1.0.2",
-    "lodash": "^3.10.1",
-    "q": "^1.4.1"
+    "hubot": "2.19.0",
+    "hubot-slack": "4.3.4",
+    "lodash": "4.17.4",
   }
 }
